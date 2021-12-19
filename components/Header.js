@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Menu, Message } from "semantic-ui-react";
+import { Menu, Message, Loader } from "semantic-ui-react";
 import web3 from "../ethereum/web3";
 import { Link } from '../routes';
 
@@ -9,6 +9,7 @@ class Header extends Component {
     currentNetwork: '',
     isValidNetwork: true,
     isConnected: false,
+    isLoading: true,
   };
 
   roundEth(amount, dec) {
@@ -24,7 +25,7 @@ class Header extends Component {
 
     const accounts = await web3.eth.getAccounts();
 
-    if (accounts.length && isValidNetwork) {
+    if (accounts.length) {
       balance = await web3.eth.getBalance(accounts[0]);
       balanceInEth = web3.utils.fromWei(balance, "ether");
     }
@@ -34,6 +35,7 @@ class Header extends Component {
       currentNetwork: currentNetwork,
       isValidNetwork,
       isConnected: accounts.length > 0,
+      isLoading: false,
     });
   }
 
@@ -56,11 +58,19 @@ class Header extends Component {
             <a className="item">CrowdCoin</a>
           </Link>
           <Menu.Menu position="right">
-            {this.state.isConnected && this.state.balance ? (
+            { !this.state.isLoading && this.state.isConnected && (
               <Menu.Item>{this.state.balance} ETH</Menu.Item>
-            ) : (
+            )}
+
+            { !this.state.isLoading && !this.state.isConnected && (
               <Menu.Item onClick={this.onConnectMetamask}>
                 Connect Metamask
+              </Menu.Item>
+            )}
+
+            { this.state.isLoading && (
+              <Menu.Item onClick={this.onConnectMetamask}>
+                Loading ...
               </Menu.Item>
             )}
 
