@@ -7,7 +7,7 @@ class Header extends Component {
   state = {
     balance: 0,
     currentNetwork: '',
-    isValidNetwork: false,
+    isValidNetwork: true,
   };
 
   roundEth(amount, dec) {
