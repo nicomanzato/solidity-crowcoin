@@ -38,7 +38,7 @@ class Header extends Component {
         
         { !this.state.isValidNetwork && (
           <Message color='red' style={{ marginTop: "10px" }}>
-                  You are currenctly connected to { this.state.currentNetwork }. Please connect to the Goerli network to test this app
+                  You are currently connected to { this.state.currentNetwork }. Please connect to the Goerli network to test this app
           </Message>
         )}
        
