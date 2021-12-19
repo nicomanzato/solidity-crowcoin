@@ -8,6 +8,7 @@ class Header extends Component {
     balance: 0,
     currentNetwork: '',
     isValidNetwork: true,
+    isConnected: false,
   };
 
   roundEth(amount, dec) {
@@ -16,15 +17,23 @@ class Header extends Component {
   }
 
   async componentDidMount() {
-    const accounts = await web3.eth.getAccounts();
-    const balance = await web3.eth.getBalance(accounts[0]);
-    const balanceInEth = web3.utils.fromWei(balance, "ether");
+    let balance = '0.0';
+    let balanceInEth = '0.0';
     const currentNetwork = await web3.eth.net.getNetworkType();
+    const isValidNetwork = currentNetwork === 'goerli';
+
+    const accounts = await web3.eth.getAccounts();
+
+    if (accounts.length && isValidNetwork) {
+      balance = await web3.eth.getBalance(accounts[0]);
+      balanceInEth = web3.utils.fromWei(balance, "ether");
+    }
 
     this.setState({
       balance: balanceInEth,
       currentNetwork: currentNetwork,
-      isValidNetwork: currentNetwork === 'goerli',
+      isValidNetwork,
+      isConnected: accounts.length > 0,
     });
   }
 
@@ -47,8 +56,8 @@ class Header extends Component {
             <a className="item">CrowdCoin</a>
           </Link>
           <Menu.Menu position="right">
-            {this.state.balance > 0 ? (
-              <Menu.Item>{this.roundEth(this.state.balance, 2)} ETH</Menu.Item>
+            {this.state.isConnected && this.state.balance ? (
+              <Menu.Item>{this.state.balance} ETH</Menu.Item>
             ) : (
               <Menu.Item onClick={this.onConnectMetamask}>
                 Connect Metamask
